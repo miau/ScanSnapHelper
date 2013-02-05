@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanSnapHelper", "ScanSnapHelper\ScanSnapHelper.csproj", "{876513C5-C0FA-4FB6-95D5-FA44557D60FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanSnapHelperInject", "ScanSnapHelperInject\ScanSnapHelperInject.csproj", "{6BB79D37-ED21-45EF-901F-7B252424DCAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{876513C5-C0FA-4FB6-95D5-FA44557D60FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{876513C5-C0FA-4FB6-95D5-FA44557D60FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{876513C5-C0FA-4FB6-95D5-FA44557D60FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BB79D37-ED21-45EF-901F-7B252424DCAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BB79D37-ED21-45EF-901F-7B252424DCAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BB79D37-ED21-45EF-901F-7B252424DCAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BB79D37-ED21-45EF-901F-7B252424DCAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
