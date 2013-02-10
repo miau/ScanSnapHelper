@@ -10,8 +10,8 @@ namespace ScanSnapHelperInject
     public class Main : EasyHook.IEntryPoint
     {
         ScanSnapHelper.ScanSnapHelperInterface Interface;
-        LocalHook CreateFileHook;
-        Stack<String> Queue = new Stack<String>();
+        LocalHook CreateFileWHook;
+        Stack<ScanSnapHelper.ApiCall> Queue = new Stack<ScanSnapHelper.ApiCall>();
 
         public Main(
             RemoteHooking.IContext InContext,
@@ -31,12 +31,12 @@ namespace ScanSnapHelperInject
             try
             {
 
-                CreateFileHook = LocalHook.Create(
+                CreateFileWHook = LocalHook.Create(
                     LocalHook.GetProcAddress("kernel32.dll", "CreateFileW"),
-                    new DCreateFile(CreateFile_Hooked),
+                    new DCreateFileW(CreateFileW_Hooked),
                     this);
 
-                CreateFileHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+                CreateFileWHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
             }
             catch (Exception ExtInfo)
             {
@@ -59,7 +59,7 @@ namespace ScanSnapHelperInject
                     // transmit newly monitored file accesses...
                     if (Queue.Count > 0)
                     {
-                        String[] Package = null;
+                        ScanSnapHelper.ApiCall[] Package = null;
 
                         lock (Queue)
                         {
@@ -68,7 +68,7 @@ namespace ScanSnapHelperInject
                             Queue.Clear();
                         }
 
-                        Interface.OnCreateFile(RemoteHooking.GetCurrentProcessId(), Package);
+                        Interface.OnApiCall(RemoteHooking.GetCurrentProcessId(), Package);
                     }
                     else
                         Interface.Ping();
@@ -83,7 +83,7 @@ namespace ScanSnapHelperInject
         [UnmanagedFunctionPointer(CallingConvention.StdCall,
             CharSet = CharSet.Unicode,
             SetLastError = true)]
-        delegate IntPtr DCreateFile(
+        delegate IntPtr DCreateFileW(
             String InFileName,
             UInt32 InDesiredAccess,
             UInt32 InShareMode,
@@ -107,7 +107,7 @@ namespace ScanSnapHelperInject
             IntPtr InTemplateFile);
 
         // this is where we are intercepting all file accesses!
-        static IntPtr CreateFile_Hooked(
+        static IntPtr CreateFileW_Hooked(
             String InFileName,
             UInt32 InDesiredAccess,
             UInt32 InShareMode,
@@ -123,8 +123,7 @@ namespace ScanSnapHelperInject
 
                 lock (This.Queue)
                 {
-                    This.Queue.Push("[" + RemoteHooking.GetCurrentProcessId() + ":" +
-                        RemoteHooking.GetCurrentThreadId() + "]: \"" + InFileName + "\"");
+                    This.Queue.Push(new ScanSnapHelper.ApiCall("CreateFileW", InFileName));
                 }
             }
             catch

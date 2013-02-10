@@ -11,12 +11,41 @@ using System.Windows.Forms;
 
 namespace ScanSnapHelper
 {
+    [Serializable]
+    public struct ApiCall
+    {
+        public string api;
+        public string[] parameters;
+        public ApiCall(string api, params string[] parameters)
+        {
+            this.api = api;
+            this.parameters = parameters;
+        }
+    }
 
     public partial class MainForm : Form
     {
+        private static MainForm _instance;
+
+        private Timer timer = new Timer();
+
+        private Int32 AcrobatPID = 0;
+
+        public static MainForm Instance
+        {
+            get {
+                return _instance;
+            }
+        }
         public MainForm()
         {
+            _instance = this;
+
             InitializeComponent();
+
+            this.timer.Enabled = true;
+            this.timer.Interval = 1000;
+            this.timer.Tick += new EventHandler(this.timer_Tick);
 
             // initialize this form
             this.Size = new Size(600, 600);
@@ -34,12 +63,7 @@ namespace ScanSnapHelper
 
             // add a item to file list
             string[] item = { Environment.GetEnvironmentVariable("TEMP"), "Open" };
-            lvFiles.Items.Add(
-                new ListViewItem(item)
-            );
-
-            // initialize EasyHook
-            InitEasyHook();
+            LogFileName(item);
         }
 
         String ChannelName = null;
@@ -51,42 +75,48 @@ namespace ScanSnapHelper
             System.Diagnostics.Process[] ps =
                 System.Diagnostics.Process.GetProcessesByName("Acrobat");
 
+            string pids = string.Join(",", ps.Select(p => p.Id.ToString()).ToArray());
+            txtAcrobat.Text = pids;
+
             if (ps.Length != 1)
             {
-                Console.WriteLine();
-                Console.WriteLine("Usage: FileMon %PID%");
-                Console.WriteLine();
-
+                txtAcrobat.Text = "Not hooked: " + pids;
                 return;
             }
             TargetPID = ps.First().Id;
-            Console.WriteLine(TargetPID);
+            if (TargetPID == AcrobatPID)
+            {
+                return;
+            }
 
             try
             {
-                try
+                if (ChannelName == null)
                 {
-                    Config.Register(
-                        "A helper tool for ScanSnapManager and Acrobat.",
-                        "ScanSnapHelper.exe",
-                        "ScanSnapHelperInject.dll");
+                    try
+                    {
+                        Config.Register(
+                            "A helper tool for ScanSnapManager and Acrobat.",
+                            "ScanSnapHelper.exe",
+                            "ScanSnapHelperInject.dll");
+                    }
+                    catch (ApplicationException)
+                    {
+                        MessageBox.Show("This is an administrative task!", "Permission denied...", MessageBoxButtons.OK);
+
+                        System.Diagnostics.Process.GetCurrentProcess().Kill();
+                    }
+
+                    RemoteHooking.IpcCreateServer<ScanSnapHelperInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
+
+                    RemoteHooking.Inject(
+                        TargetPID,
+                        "ScanSnapHelperInject.dll",
+                        "ScanSnapHelperInject.dll",
+                        ChannelName);
                 }
-                catch (ApplicationException)
-                {
-                    MessageBox.Show("This is an administrative task!", "Permission denied...", MessageBoxButtons.OK);
-
-                    System.Diagnostics.Process.GetCurrentProcess().Kill();
-                }
-
-                RemoteHooking.IpcCreateServer<ScanSnapHelperInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
-
-                RemoteHooking.Inject(
-                    TargetPID,
-                    "ScanSnapHelperInject.dll",
-                    "ScanSnapHelperInject.dll",
-                    ChannelName);
-
-                Console.ReadLine();
+                txtAcrobat.Text = "Hooked: " + pids;
+                AcrobatPID = TargetPID;
             }
             catch (Exception ExtInfo)
             {
@@ -94,21 +124,54 @@ namespace ScanSnapHelper
             }
         }
 
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            InitEasyHook();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        public void OnApiCall(ApiCall Call)
+        {
+            if (Call.api == "CreateFileW") {
+                string[] item = {Call.parameters.First(), Call.api};
+                lvFiles.Items.Add(new ListViewItem(item));
+            } else {
+                MessageBox.Show("unexpected api", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void LogFileName(string[] item)
+        {
+            lvFiles.Items.Add(new ListViewItem(item));
+        }
+
     }
 
     public class ScanSnapHelperInterface : MarshalByRefObject
     {
+        private delegate void MyDelegate(ApiCall Call);
+
         public void IsInstalled(Int32 InClientPID)
         {
             Console.WriteLine("FileMon has been installed in target {0}.\r\n", InClientPID);
         }
 
-        public void OnCreateFile(Int32 InClientPID, String[] InFileNames)
+        public void OnApiCall(Int32 InClientPID, ApiCall[] Calls)
         {
-            for (int i = 0; i < InFileNames.Length; i++)
-            {
-                Console.WriteLine(InFileNames[i]);
+            foreach (ApiCall Call in Calls) {
+                // 方法 : Windows フォーム コントロールのスレッド セーフな呼び出しを行う
+                // http://msdn.microsoft.com/ja-jp/library/ms171728%28VS.80%29.aspx
+                MainForm.Instance.Invoke(new MyDelegate(ProxyApiCall), Call);
             }
+        }
+
+        private void ProxyApiCall(ApiCall Call)
+        {
+            MainForm.Instance.OnApiCall(Call);
         }
 
         public void ReportException(Exception InInfo)
