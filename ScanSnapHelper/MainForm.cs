@@ -136,7 +136,7 @@ namespace ScanSnapHelper
 
         public void OnApiCall(ApiCall Call)
         {
-            if (Call.api == "CreateFileW") {
+            if (Call.api == "CreateFileW" || Call.api == "CreateFileA") {
                 string[] item = {Call.parameters.First(), Call.api};
                 lvFiles.Items.Add(new ListViewItem(item));
             } else {
