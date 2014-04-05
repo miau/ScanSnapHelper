@@ -136,10 +136,17 @@ namespace ScanSnapHelper
 
         public void OnApiCall(ApiCall Call)
         {
-            if (Call.api == "CreateFileW" || Call.api == "CreateFileA") {
+            if (Call.api == "CreateFileW" || Call.api == "CreateFileA")
+            {
+                string[] item = { Call.parameters.First(), Call.api };
+                lvFiles.Items.Add(new ListViewItem(item));
+            }
+            else if (Call.api == "DeleteFileW" || Call.api == "DeleteFileA")
+            {
                 string[] item = {Call.parameters.First(), Call.api};
                 lvFiles.Items.Add(new ListViewItem(item));
-            } else {
+            }
+            else {
                 MessageBox.Show("unexpected api", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

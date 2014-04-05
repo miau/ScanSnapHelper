@@ -9,9 +9,13 @@ namespace ScanSnapHelperInject
 {
     public class Main : EasyHook.IEntryPoint
     {
+        static string TempPath = Environment.GetEnvironmentVariable("TEMP");
+
         ScanSnapHelper.ScanSnapHelperInterface Interface;
         LocalHook CreateFileWHook;
         LocalHook CreateFileAHook;
+        LocalHook DeleteFileWHook;
+        LocalHook DeleteFileAHook;
         Stack<ScanSnapHelper.ApiCall> Queue = new Stack<ScanSnapHelper.ApiCall>();
 
         public Main(
@@ -31,17 +35,29 @@ namespace ScanSnapHelperInject
             // install hook...
             try
             {
-                CreateFileWHook = LocalHook.Create(
-                    LocalHook.GetProcAddress("kernel32.dll", "CreateFileW"),
-                    new DCreateFileW(CreateFileW_Hooked),
-                    this);
-                CreateFileWHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+                //CreateFileWHook = LocalHook.Create(
+                //    LocalHook.GetProcAddress("kernel32.dll", "CreateFileW"),
+                //    new DCreateFileW(CreateFileW_Hooked),
+                //    this);
+                //CreateFileWHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
 
-                CreateFileAHook = LocalHook.Create(
-                    LocalHook.GetProcAddress("kernel32.dll", "CreateFileA"),
-                    new DCreateFileA(CreateFileA_Hooked),
+                //CreateFileAHook = LocalHook.Create(
+                //    LocalHook.GetProcAddress("kernel32.dll", "CreateFileA"),
+                //    new DCreateFileA(CreateFileA_Hooked),
+                //    this);
+                //CreateFileAHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+
+                DeleteFileWHook = LocalHook.Create(
+                    LocalHook.GetProcAddress("kernel32.dll", "DeleteFileW"),
+                    new DDeleteFileW(DeleteFileW_Hooked),
                     this);
-                CreateFileAHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+                DeleteFileWHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+
+                DeleteFileAHook = LocalHook.Create(
+                    LocalHook.GetProcAddress("kernel32.dll", "DeleteFileA"),
+                    new DDeleteFileA(DeleteFileA_Hooked),
+                    this);
+                DeleteFileAHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
             }
             catch (Exception ExtInfo)
             {
@@ -109,6 +125,18 @@ namespace ScanSnapHelperInject
             UInt32 InFlagsAndAttributes,
             IntPtr InTemplateFile);
 
+        [UnmanagedFunctionPointer(CallingConvention.StdCall,
+            CharSet = CharSet.Unicode,
+            SetLastError = true)]
+        delegate bool DDeleteFileW(
+            String InFileName);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall,
+            CharSet = CharSet.Ansi,
+            SetLastError = true)]
+        delegate bool DDeleteFileA(
+            String InFileName);
+
         // just use a P-Invoke implementation to get native API access from C# (this step is not necessary for C++.NET)
         [DllImport("kernel32.dll",
             CharSet = CharSet.Unicode,
@@ -135,6 +163,20 @@ namespace ScanSnapHelperInject
             UInt32 InCreationDisposition,
             UInt32 InFlagsAndAttributes,
             IntPtr InTemplateFile);
+
+        [DllImport("kernel32.dll",
+            CharSet = CharSet.Unicode,
+            SetLastError = true,
+            CallingConvention = CallingConvention.StdCall)]
+        static extern bool DeleteFileW(
+            String InFileName);
+
+        [DllImport("kernel32.dll",
+            CharSet = CharSet.Ansi,
+            SetLastError = true,
+            CallingConvention = CallingConvention.StdCall)]
+        static extern bool DeleteFileA(
+            String InFileName);
 
         // this is where we are intercepting all file accesses!
         static IntPtr CreateFileW_Hooked(
@@ -203,6 +245,66 @@ namespace ScanSnapHelperInject
                 InCreationDisposition,
                 InFlagsAndAttributes,
                 InTemplateFile);
+        }
+
+        static bool DeleteFileW_Hooked(
+            String InFileName)
+        {
+            bool ShouldBeHooked = InFileName.StartsWith(TempPath);
+
+            if (ShouldBeHooked)
+            {
+                try
+                {
+                    Main This = (Main)HookRuntimeInfo.Callback;
+
+                    lock (This.Queue)
+                    {
+                        This.Queue.Push(new ScanSnapHelper.ApiCall("DeleteFileW", InFileName));
+                    }
+                }
+                catch
+                {
+                }
+                // don't call original API
+                return true;
+            }
+            else
+            {
+                // call original API...
+                return DeleteFileW(
+                    InFileName);
+            }
+        }
+
+        static bool DeleteFileA_Hooked(
+            String InFileName)
+        {
+            bool ShouldBeHooked = InFileName.StartsWith(TempPath);
+
+            if (ShouldBeHooked)
+            {
+                try
+                {
+                    Main This = (Main)HookRuntimeInfo.Callback;
+
+                    lock (This.Queue)
+                    {
+                        This.Queue.Push(new ScanSnapHelper.ApiCall("DeleteFileA", InFileName));
+                    }
+                }
+                catch
+                {
+                }
+                // don't call original API
+                return true;
+            }
+            else
+            {
+                // call original API...
+                return DeleteFileA(
+                    InFileName);
+            }
         }
     }
 }
