@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.lvFiles = new System.Windows.Forms.ListView();
-            this.lblAcrobat = new System.Windows.Forms.Label();
-            this.txtAcrobat = new System.Windows.Forms.TextBox();
+            this.lblSsMon = new System.Windows.Forms.Label();
+            this.txtSsMon = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // lvFiles
@@ -38,39 +38,41 @@
             this.lvFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvFiles.Location = new System.Drawing.Point(10, 100);
-            this.lvFiles.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.lvFiles.Location = new System.Drawing.Point(12, 120);
+            this.lvFiles.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.lvFiles.Name = "lvFiles";
-            this.lvFiles.Size = new System.Drawing.Size(556, 428);
+            this.lvFiles.Size = new System.Drawing.Size(656, 513);
             this.lvFiles.TabIndex = 0;
             this.lvFiles.UseCompatibleStateImageBehavior = false;
             // 
-            // lblAcrobat
+            // lblSsMon
             // 
-            this.lblAcrobat.AutoSize = true;
-            this.lblAcrobat.Location = new System.Drawing.Point(13, 13);
-            this.lblAcrobat.Name = "lblAcrobat";
-            this.lblAcrobat.Size = new System.Drawing.Size(119, 21);
-            this.lblAcrobat.TabIndex = 1;
-            this.lblAcrobat.Text = "Acrobat.exe:";
+            this.lblSsMon.AutoSize = true;
+            this.lblSsMon.Location = new System.Drawing.Point(15, 16);
+            this.lblSsMon.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSsMon.Name = "lblSsMon";
+            this.lblSsMon.Size = new System.Drawing.Size(168, 25);
+            this.lblSsMon.TabIndex = 1;
+            this.lblSsMon.Text = "PfuSsMon.exe:";
             // 
-            // txtAcrobat
+            // txtSsMon
             // 
-            this.txtAcrobat.Enabled = false;
-            this.txtAcrobat.Location = new System.Drawing.Point(152, 10);
-            this.txtAcrobat.Name = "txtAcrobat";
-            this.txtAcrobat.Size = new System.Drawing.Size(200, 27);
-            this.txtAcrobat.TabIndex = 2;
+            this.txtSsMon.Enabled = false;
+            this.txtSsMon.Location = new System.Drawing.Point(180, 12);
+            this.txtSsMon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtSsMon.Name = "txtSsMon";
+            this.txtSsMon.Size = new System.Drawing.Size(236, 31);
+            this.txtSsMon.TabIndex = 2;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(576, 538);
-            this.Controls.Add(this.txtAcrobat);
-            this.Controls.Add(this.lblAcrobat);
+            this.ClientSize = new System.Drawing.Size(681, 646);
+            this.Controls.Add(this.txtSsMon);
+            this.Controls.Add(this.lblSsMon);
             this.Controls.Add(this.lvFiles);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.Name = "MainForm";
             this.Text = "ScanSnapHelper";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -82,8 +84,8 @@
         #endregion
 
         private System.Windows.Forms.ListView lvFiles;
-        private System.Windows.Forms.Label lblAcrobat;
-        private System.Windows.Forms.TextBox txtAcrobat;
+        private System.Windows.Forms.Label lblSsMon;
+        private System.Windows.Forms.TextBox txtSsMon;
     }
 }
 

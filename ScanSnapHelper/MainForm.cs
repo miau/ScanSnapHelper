@@ -29,7 +29,7 @@ namespace ScanSnapHelper
 
         private Timer timer = new Timer();
 
-        private Int32 AcrobatPID = 0;
+        private Int32 SsMonPID = 0;
 
         public static MainForm Instance
         {
@@ -73,18 +73,17 @@ namespace ScanSnapHelper
             Int32 TargetPID = 0;
 
             System.Diagnostics.Process[] ps =
-                System.Diagnostics.Process.GetProcessesByName("Acrobat");
+                System.Diagnostics.Process.GetProcessesByName("PfuSsMon");
 
             string pids = string.Join(",", ps.Select(p => p.Id.ToString()).ToArray());
-            txtAcrobat.Text = pids;
 
             if (ps.Length != 1)
             {
-                txtAcrobat.Text = "Not hooked: " + pids;
+                txtSsMon.Text = "Not hooked: " + pids;
                 return;
             }
             TargetPID = ps.First().Id;
-            if (TargetPID == AcrobatPID)
+            if (TargetPID == SsMonPID)
             {
                 return;
             }
@@ -96,7 +95,7 @@ namespace ScanSnapHelper
                     try
                     {
                         Config.Register(
-                            "A helper tool for ScanSnapManager and Acrobat.",
+                            "A helper tool for ScanSnapManager.",
                             "ScanSnapHelper.exe",
                             "ScanSnapHelperInject.dll");
                     }
@@ -115,8 +114,8 @@ namespace ScanSnapHelper
                         "ScanSnapHelperInject.dll",
                         ChannelName);
                 }
-                txtAcrobat.Text = "Hooked: " + pids;
-                AcrobatPID = TargetPID;
+                txtSsMon.Text = "Hooked: " + pids;
+                SsMonPID = TargetPID;
             }
             catch (Exception ExtInfo)
             {
@@ -157,7 +156,7 @@ namespace ScanSnapHelper
 
         public void IsInstalled(Int32 InClientPID)
         {
-            Console.WriteLine("FileMon has been installed in target {0}.\r\n", InClientPID);
+            Console.WriteLine("ScanSnapHelper has been installed in target {0}.\r\n", InClientPID);
         }
 
         public void OnApiCall(Int32 InClientPID, ApiCall[] Calls)
