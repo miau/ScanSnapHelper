@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
 using EasyHook;
+using System.Diagnostics;
 
 namespace ScanSnapHelperInject
 {
@@ -13,6 +14,7 @@ namespace ScanSnapHelperInject
         LocalHook CreateFileWHook;
         LocalHook CreateFileAHook;
         Stack<ScanSnapHelper.ApiCall> Queue = new Stack<ScanSnapHelper.ApiCall>();
+        static string HookCommand;
 
         public Main(
             RemoteHooking.IContext InContext,
@@ -22,6 +24,8 @@ namespace ScanSnapHelperInject
             Interface = RemoteHooking.IpcConnectClient<ScanSnapHelper.ScanSnapHelperInterface>(InChannelName);
 
             Interface.Ping();
+
+            HookCommand = Interface.GetHookCommand();
         }
 
         public void Run(
@@ -183,6 +187,18 @@ namespace ScanSnapHelperInject
 
             try
             {
+                // %TEMP%\SSRawData\ScanSnap*.raw の読み込み時に外部コマンドを起動する
+                if (InDesiredAccess == 0x80000000 // GENERIC_READ
+                    && InFileName.Contains(@"SSRawData\ScanSnap")) {
+                    ProcessStartInfo psInfo = new ProcessStartInfo();
+                    psInfo.FileName = HookCommand;
+                    psInfo.Arguments = InFileName;
+                    psInfo.CreateNoWindow = true;   // コンソール・ウィンドウを開かない
+                    psInfo.UseShellExecute = false; // シェル機能を使用しない
+                    var p = Process.Start(psInfo);
+                    p.WaitForExit();                // 終了まで待機
+                }
+
                 Main This = (Main)HookRuntimeInfo.Callback;
 
                 lock (This.Queue)

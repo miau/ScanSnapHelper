@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting;
@@ -157,6 +158,11 @@ namespace ScanSnapHelper
         public void IsInstalled(Int32 InClientPID)
         {
             Console.WriteLine("ScanSnapHelper has been installed in target {0}.\r\n", InClientPID);
+        }
+
+        public string GetHookCommand()
+        {
+            return System.Windows.Forms.Application.StartupPath + "\\hook.bat";
         }
 
         public void OnApiCall(Int32 InClientPID, ApiCall[] Calls)
