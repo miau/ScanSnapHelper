@@ -30,7 +30,8 @@ namespace ScanSnapHelper
 
         private Timer timer = new Timer();
 
-        private Int32 SsMonPID = 0;
+        public Int32 SsMonPID = 0;
+        public Int32 SsMffPID = 0;
 
         public static MainForm Instance
         {
@@ -38,6 +39,7 @@ namespace ScanSnapHelper
                 return _instance;
             }
         }
+
         public MainForm()
         {
             _instance = this;
@@ -67,20 +69,27 @@ namespace ScanSnapHelper
 
         protected void InitEasyHook()
         {
+            InitEasyHookPerProcess("PfuSsMon", txtSsMon, ref SsMonPID);
+            InitEasyHookPerProcess("PfuSsMff", txtSsMff, ref SsMffPID);
+        }
+
+        protected void InitEasyHookPerProcess(string ProcessName, TextBox TargetTextBox, ref Int32 HookedPID)
+        {
+
             Int32 TargetPID = 0;
 
             System.Diagnostics.Process[] ps =
-                System.Diagnostics.Process.GetProcessesByName("PfuSsMon");
+                System.Diagnostics.Process.GetProcessesByName(ProcessName);
 
             string pids = string.Join(",", ps.Select(p => p.Id.ToString()).ToArray());
 
             if (ps.Length != 1)
             {
-                txtSsMon.Text = "Not hooked: " + pids;
+                TargetTextBox.Text = "Not hooked: " + pids;
                 return;
             }
             TargetPID = ps.First().Id;
-            if (TargetPID == SsMonPID)
+            if (TargetPID == HookedPID)
             {
                 return;
             }
@@ -104,19 +113,19 @@ namespace ScanSnapHelper
                     }
 
                     RemoteHooking.IpcCreateServer<ScanSnapHelperInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
-
-                    RemoteHooking.Inject(
-                        TargetPID,
-                        "ScanSnapHelperInject.dll",
-                        "ScanSnapHelperInject.dll",
-                        ChannelName);
                 }
-                txtSsMon.Text = "Hooked: " + pids;
-                SsMonPID = TargetPID;
+                HookedPID = TargetPID;
+                RemoteHooking.Inject(
+                    TargetPID,
+                    "ScanSnapHelperInject.dll",
+                    "ScanSnapHelperInject.dll",
+                    ChannelName);
+                TargetTextBox.Text = "Hooked: " + pids;
             }
             catch (Exception ExtInfo)
             {
                 Console.WriteLine("There was an error while connecting to target:\r\n{0}", ExtInfo.ToString());
+                HookedPID = 0;
             }
         }
 
@@ -156,9 +165,19 @@ namespace ScanSnapHelper
             Console.WriteLine("ScanSnapHelper has been installed in target {0}.\r\n", InClientPID);
         }
 
-        public string GetFilePathPattern()
+        public string GetFilePathPatternFor(Int32 InClientPID)
         {
-            return @"SSRawData\ScanSnap";
+            if (InClientPID == MainForm.Instance.SsMonPID)
+            {
+                // raw ファイルは %TEMP%\SSRawData\ScanSnap*.raw
+                return @"SSRawData\ScanSnap";
+            }
+            else
+            {
+                // raw ファイルは %APPDATA%\PFU\ScanSnapManagerForFi\ScandAll PRO＊.raw
+                return @"ScanSnapManagerForFi\ScandAll PRO";
+            }
+
         }
 
         public string GetHookCommand()

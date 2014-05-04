@@ -26,7 +26,7 @@ namespace ScanSnapHelperInject
 
             Interface.Ping();
 
-            FilePathPattern = Interface.GetFilePathPattern();
+            FilePathPattern = Interface.GetFilePathPatternFor(RemoteHooking.GetCurrentProcessId());
             HookCommand = Interface.GetHookCommand();
         }
 
@@ -189,7 +189,7 @@ namespace ScanSnapHelperInject
 
             try
             {
-                // %TEMP%\SSRawData\ScanSnap*.raw の読み込み時に外部コマンドを起動する
+                // raw ファイルの読み込み時に外部コマンドを起動する
                 if (InDesiredAccess == 0x80000000 // GENERIC_READ
                     && InFileName.Contains(FilePathPattern)) {
                     ProcessStartInfo psInfo = new ProcessStartInfo();

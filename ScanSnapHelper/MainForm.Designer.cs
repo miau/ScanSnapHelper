@@ -31,6 +31,8 @@
             this.lvFiles = new System.Windows.Forms.ListView();
             this.lblSsMon = new System.Windows.Forms.Label();
             this.txtSsMon = new System.Windows.Forms.TextBox();
+            this.lblSsMff = new System.Windows.Forms.Label();
+            this.txtSsMff = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // lvFiles
@@ -41,7 +43,7 @@
             this.lvFiles.Location = new System.Drawing.Point(12, 120);
             this.lvFiles.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.lvFiles.Name = "lvFiles";
-            this.lvFiles.Size = new System.Drawing.Size(656, 513);
+            this.lvFiles.Size = new System.Drawing.Size(754, 513);
             this.lvFiles.TabIndex = 0;
             this.lvFiles.UseCompatibleStateImageBehavior = false;
             // 
@@ -51,24 +53,47 @@
             this.lblSsMon.Location = new System.Drawing.Point(15, 16);
             this.lblSsMon.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSsMon.Name = "lblSsMon";
-            this.lblSsMon.Size = new System.Drawing.Size(168, 25);
+            this.lblSsMon.Size = new System.Drawing.Size(387, 25);
             this.lblSsMon.TabIndex = 1;
-            this.lblSsMon.Text = "PfuSsMon.exe:";
+            this.lblSsMon.Text = "ScanSnap Manager(PfuSsMon.exe):";
             // 
             // txtSsMon
             // 
+            this.txtSsMon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSsMon.Enabled = false;
-            this.txtSsMon.Location = new System.Drawing.Point(180, 12);
-            this.txtSsMon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtSsMon.Location = new System.Drawing.Point(530, 10);
+            this.txtSsMon.Margin = new System.Windows.Forms.Padding(4);
             this.txtSsMon.Name = "txtSsMon";
             this.txtSsMon.Size = new System.Drawing.Size(236, 31);
             this.txtSsMon.TabIndex = 2;
+            // 
+            // lblSsMff
+            // 
+            this.lblSsMff.AutoSize = true;
+            this.lblSsMff.Location = new System.Drawing.Point(15, 56);
+            this.lblSsMff.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSsMff.Name = "lblSsMff";
+            this.lblSsMff.Size = new System.Drawing.Size(511, 25);
+            this.lblSsMff.TabIndex = 3;
+            this.lblSsMff.Text = "ScanSnap Manager for fi Series(PfuSsMff.exe):";
+            // 
+            // txtSsMff
+            // 
+            this.txtSsMff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSsMff.Enabled = false;
+            this.txtSsMff.Location = new System.Drawing.Point(530, 53);
+            this.txtSsMff.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSsMff.Name = "txtSsMff";
+            this.txtSsMff.Size = new System.Drawing.Size(236, 31);
+            this.txtSsMff.TabIndex = 4;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(681, 646);
+            this.ClientSize = new System.Drawing.Size(779, 646);
+            this.Controls.Add(this.txtSsMff);
+            this.Controls.Add(this.lblSsMff);
             this.Controls.Add(this.txtSsMon);
             this.Controls.Add(this.lblSsMon);
             this.Controls.Add(this.lvFiles);
@@ -86,6 +111,8 @@
         private System.Windows.Forms.ListView lvFiles;
         private System.Windows.Forms.Label lblSsMon;
         private System.Windows.Forms.TextBox txtSsMon;
+        private System.Windows.Forms.Label lblSsMff;
+        private System.Windows.Forms.TextBox txtSsMff;
     }
 }
 
