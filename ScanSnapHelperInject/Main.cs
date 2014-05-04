@@ -14,6 +14,7 @@ namespace ScanSnapHelperInject
         LocalHook CreateFileWHook;
         LocalHook CreateFileAHook;
         Stack<ScanSnapHelper.ApiCall> Queue = new Stack<ScanSnapHelper.ApiCall>();
+        static string FilePathPattern;
         static string HookCommand;
 
         public Main(
@@ -25,6 +26,7 @@ namespace ScanSnapHelperInject
 
             Interface.Ping();
 
+            FilePathPattern = Interface.GetFilePathPattern();
             HookCommand = Interface.GetHookCommand();
         }
 
@@ -189,7 +191,7 @@ namespace ScanSnapHelperInject
             {
                 // %TEMP%\SSRawData\ScanSnap*.raw の読み込み時に外部コマンドを起動する
                 if (InDesiredAccess == 0x80000000 // GENERIC_READ
-                    && InFileName.Contains(@"SSRawData\ScanSnap")) {
+                    && InFileName.Contains(FilePathPattern)) {
                     ProcessStartInfo psInfo = new ProcessStartInfo();
                     psInfo.FileName = HookCommand;
                     psInfo.Arguments = InFileName;

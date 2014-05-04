@@ -160,6 +160,11 @@ namespace ScanSnapHelper
             Console.WriteLine("ScanSnapHelper has been installed in target {0}.\r\n", InClientPID);
         }
 
+        public string GetFilePathPattern()
+        {
+            return @"SSRawData\ScanSnap";
+        }
+
         public string GetHookCommand()
         {
             return System.Windows.Forms.Application.StartupPath + "\\hook.bat";
