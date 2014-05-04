@@ -61,10 +61,6 @@ namespace ScanSnapHelper
             lvFiles.FullRowSelect = true;
             lvFiles.GridLines = true;
             lvFiles.View = View.Details;
-
-            // add a item to file list
-            string[] item = { Environment.GetEnvironmentVariable("TEMP"), "Open" };
-            LogFileName(item);
         }
 
         String ChannelName = null;
