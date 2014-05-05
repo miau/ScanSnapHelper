@@ -11,7 +11,6 @@ namespace ScanSnapHelperInject
     public class Main : EasyHook.IEntryPoint
     {
         ScanSnapHelper.ScanSnapHelperInterface Interface;
-        LocalHook CreateFileWHook;
         LocalHook CreateFileAHook;
         static string FilePathPattern;
         static string HookCommand;
@@ -36,12 +35,6 @@ namespace ScanSnapHelperInject
             // install hook...
             try
             {
-                CreateFileWHook = LocalHook.Create(
-                    LocalHook.GetProcAddress("kernel32.dll", "CreateFileW"),
-                    new DCreateFileW(CreateFileW_Hooked),
-                    this);
-                CreateFileWHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
-
                 CreateFileAHook = LocalHook.Create(
                     LocalHook.GetProcAddress("kernel32.dll", "CreateFileA"),
                     new DCreateFileA(CreateFileA_Hooked),
@@ -75,18 +68,6 @@ namespace ScanSnapHelperInject
         }
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall,
-            CharSet = CharSet.Unicode,
-            SetLastError = true)]
-        delegate IntPtr DCreateFileW(
-            String InFileName,
-            UInt32 InDesiredAccess,
-            UInt32 InShareMode,
-            IntPtr InSecurityAttributes,
-            UInt32 InCreationDisposition,
-            UInt32 InFlagsAndAttributes,
-            IntPtr InTemplateFile);
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
         delegate IntPtr DCreateFileA(
@@ -99,19 +80,6 @@ namespace ScanSnapHelperInject
             IntPtr InTemplateFile);
 
         // just use a P-Invoke implementation to get native API access from C# (this step is not necessary for C++.NET)
-        [DllImport("kernel32.dll",
-            CharSet = CharSet.Unicode,
-            SetLastError = true,
-            CallingConvention = CallingConvention.StdCall)]
-        static extern IntPtr CreateFileW(
-            String InFileName,
-            UInt32 InDesiredAccess,
-            UInt32 InShareMode,
-            IntPtr InSecurityAttributes,
-            UInt32 InCreationDisposition,
-            UInt32 InFlagsAndAttributes,
-            IntPtr InTemplateFile);
-
         [DllImport("kernel32.dll",
             CharSet = CharSet.Ansi,
             SetLastError = true,
@@ -126,35 +94,6 @@ namespace ScanSnapHelperInject
             IntPtr InTemplateFile);
 
         // this is where we are intercepting all file accesses!
-        static IntPtr CreateFileW_Hooked(
-            String InFileName,
-            UInt32 InDesiredAccess,
-            UInt32 InShareMode,
-            IntPtr InSecurityAttributes,
-            UInt32 InCreationDisposition,
-            UInt32 InFlagsAndAttributes,
-            IntPtr InTemplateFile)
-        {
-
-            try
-            {
-                Main This = (Main)HookRuntimeInfo.Callback;
-            }
-            catch
-            {
-            }
-
-            // call original API...
-            return CreateFileW(
-                InFileName,
-                InDesiredAccess,
-                InShareMode,
-                InSecurityAttributes,
-                InCreationDisposition,
-                InFlagsAndAttributes,
-                InTemplateFile);
-        }
-
         static IntPtr CreateFileA_Hooked(
             String InFileName,
             UInt32 InDesiredAccess,
