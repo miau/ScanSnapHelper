@@ -28,24 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lvFiles = new System.Windows.Forms.ListView();
             this.lblSsMon = new System.Windows.Forms.Label();
             this.txtSsMon = new System.Windows.Forms.TextBox();
             this.lblSsMff = new System.Windows.Forms.Label();
             this.txtSsMff = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // lvFiles
-            // 
-            this.lvFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvFiles.Location = new System.Drawing.Point(12, 120);
-            this.lvFiles.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
-            this.lvFiles.Name = "lvFiles";
-            this.lvFiles.Size = new System.Drawing.Size(754, 513);
-            this.lvFiles.TabIndex = 0;
-            this.lvFiles.UseCompatibleStateImageBehavior = false;
             // 
             // lblSsMon
             // 
@@ -61,7 +48,7 @@
             // 
             this.txtSsMon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSsMon.Enabled = false;
-            this.txtSsMon.Location = new System.Drawing.Point(530, 10);
+            this.txtSsMon.Location = new System.Drawing.Point(607, 10);
             this.txtSsMon.Margin = new System.Windows.Forms.Padding(4);
             this.txtSsMon.Name = "txtSsMon";
             this.txtSsMon.Size = new System.Drawing.Size(236, 31);
@@ -81,7 +68,7 @@
             // 
             this.txtSsMff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSsMff.Enabled = false;
-            this.txtSsMff.Location = new System.Drawing.Point(530, 53);
+            this.txtSsMff.Location = new System.Drawing.Point(607, 53);
             this.txtSsMff.Margin = new System.Windows.Forms.Padding(4);
             this.txtSsMff.Name = "txtSsMff";
             this.txtSsMff.Size = new System.Drawing.Size(236, 31);
@@ -91,12 +78,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(779, 646);
+            this.ClientSize = new System.Drawing.Size(856, 102);
             this.Controls.Add(this.txtSsMff);
             this.Controls.Add(this.lblSsMff);
             this.Controls.Add(this.txtSsMon);
             this.Controls.Add(this.lblSsMon);
-            this.Controls.Add(this.lvFiles);
             this.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.Name = "MainForm";
             this.Text = "ScanSnapHelper";
@@ -108,7 +94,6 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView lvFiles;
         private System.Windows.Forms.Label lblSsMon;
         private System.Windows.Forms.TextBox txtSsMon;
         private System.Windows.Forms.Label lblSsMff;

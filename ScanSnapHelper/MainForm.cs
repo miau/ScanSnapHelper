@@ -12,18 +12,6 @@ using System.Windows.Forms;
 
 namespace ScanSnapHelper
 {
-    [Serializable]
-    public struct ApiCall
-    {
-        public string api;
-        public string[] parameters;
-        public ApiCall(string api, params string[] parameters)
-        {
-            this.api = api;
-            this.parameters = parameters;
-        }
-    }
-
     public partial class MainForm : Form
     {
         private static MainForm _instance;
@@ -49,20 +37,6 @@ namespace ScanSnapHelper
             this.timer.Enabled = true;
             this.timer.Interval = 1000;
             this.timer.Tick += new EventHandler(this.timer_Tick);
-
-            // initialize this form
-            this.Size = new Size(600, 600);
-
-            // initialize file list
-            ColumnHeader[] columnHeaders = {
-                new ColumnHeader() { Text = "File", Width = 300 },
-                new ColumnHeader() { Text = "Status" }
-            };
-            lvFiles.Columns.AddRange(columnHeaders);
-
-            lvFiles.FullRowSelect = true;
-            lvFiles.GridLines = true;
-            lvFiles.View = View.Details;
         }
 
         String ChannelName = null;
@@ -138,28 +112,10 @@ namespace ScanSnapHelper
         {
 
         }
-
-        public void OnApiCall(ApiCall Call)
-        {
-            if (Call.api == "CreateFileW" || Call.api == "CreateFileA") {
-                string[] item = {Call.parameters.First(), Call.api};
-                lvFiles.Items.Add(new ListViewItem(item));
-            } else {
-                MessageBox.Show("unexpected api", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        public void LogFileName(string[] item)
-        {
-            lvFiles.Items.Add(new ListViewItem(item));
-        }
-
     }
 
     public class ScanSnapHelperInterface : MarshalByRefObject
     {
-        private delegate void MyDelegate(ApiCall Call);
-
         public void IsInstalled(Int32 InClientPID)
         {
             Console.WriteLine("ScanSnapHelper has been installed in target {0}.\r\n", InClientPID);
@@ -183,20 +139,6 @@ namespace ScanSnapHelper
         public string GetHookCommand()
         {
             return System.Windows.Forms.Application.StartupPath + "\\hook.bat";
-        }
-
-        public void OnApiCall(Int32 InClientPID, ApiCall[] Calls)
-        {
-            foreach (ApiCall Call in Calls) {
-                // 方法 : Windows フォーム コントロールのスレッド セーフな呼び出しを行う
-                // http://msdn.microsoft.com/ja-jp/library/ms171728%28VS.80%29.aspx
-                MainForm.Instance.Invoke(new MyDelegate(ProxyApiCall), Call);
-            }
-        }
-
-        private void ProxyApiCall(ApiCall Call)
-        {
-            MainForm.Instance.OnApiCall(Call);
         }
 
         public void ReportException(Exception InInfo)

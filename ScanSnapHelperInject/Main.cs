@@ -13,7 +13,6 @@ namespace ScanSnapHelperInject
         ScanSnapHelper.ScanSnapHelperInterface Interface;
         LocalHook CreateFileWHook;
         LocalHook CreateFileAHook;
-        Stack<ScanSnapHelper.ApiCall> Queue = new Stack<ScanSnapHelper.ApiCall>();
         static string FilePathPattern;
         static string HookCommand;
 
@@ -66,23 +65,7 @@ namespace ScanSnapHelperInject
                 while (true)
                 {
                     Thread.Sleep(500);
-
-                    // transmit newly monitored file accesses...
-                    if (Queue.Count > 0)
-                    {
-                        ScanSnapHelper.ApiCall[] Package = null;
-
-                        lock (Queue)
-                        {
-                            Package = Queue.ToArray();
-
-                            Queue.Clear();
-                        }
-
-                        Interface.OnApiCall(RemoteHooking.GetCurrentProcessId(), Package);
-                    }
-                    else
-                        Interface.Ping();
+                    Interface.Ping();
                 }
             }
             catch
@@ -156,11 +139,6 @@ namespace ScanSnapHelperInject
             try
             {
                 Main This = (Main)HookRuntimeInfo.Callback;
-
-                lock (This.Queue)
-                {
-                    This.Queue.Push(new ScanSnapHelper.ApiCall("CreateFileW", InFileName));
-                }
             }
             catch
             {
@@ -202,11 +180,6 @@ namespace ScanSnapHelperInject
                 }
 
                 Main This = (Main)HookRuntimeInfo.Callback;
-
-                lock (This.Queue)
-                {
-                    This.Queue.Push(new ScanSnapHelper.ApiCall("CreateFileA", InFileName));
-                }
             }
             catch
             {
