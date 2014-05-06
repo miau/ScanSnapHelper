@@ -102,7 +102,7 @@
     <PostBuildEvent>copy "$(SolutionDir)EasyHook\EasyHook32.dll" "$(TargetDir)"
 copy "$(SolutionDir)EasyHook\EasyHook32Svc.exe" "$(TargetDir)"
 copy "$(SolutionDir)EasyHook\EasyHook64.dll" "$(TargetDir)"
-copy "$(ProjectDir)sample_scripts\*" "$(TargetDir)"
+xcopy /s /y "$(ProjectDir)sample_scripts\*" "$(TargetDir)"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
