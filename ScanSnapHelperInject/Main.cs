@@ -111,7 +111,7 @@ namespace ScanSnapHelperInject
                     && InFileName.Contains(FilePathPattern)) {
                     ProcessStartInfo psInfo = new ProcessStartInfo();
                     psInfo.FileName = HookCommand;
-                    psInfo.Arguments = InFileName;
+                    psInfo.Arguments = "\"" + InFileName + "\"";
                     psInfo.CreateNoWindow = true;   // コンソール・ウィンドウを開かない
                     psInfo.UseShellExecute = false; // シェル機能を使用しない
                     var p = Process.Start(psInfo);
