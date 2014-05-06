@@ -37,14 +37,14 @@ ScanSnapHelper.exe を起動すると、勝手に
 
 フック状態でスキャンを行うと、hook.bat が起動されます。
 
-サンプルとして、3 つのスクリプトを含めてあります。
+サンプルとして、scripts ディレクトリ配下に 3 つのスクリプトを含めてあります。
 
 * copy_here.py
-  * RAW 画像をスクリプトと同階層にコピーします。
+  * RAW 画像を images ディレクトリにコピーします。
   * ScanSnap Manager では ScanSnap0.raw、ScanSnap1.raw のような名称になります。
   * 継続読み取りの際は連番は 0 に戻ってしまいますので、長期保存には向きません。
 * replace_images.py
-  * RAW画像をスクリプトと同階層にある同名のファイルで置き換えます。
+  * RAW 画像を images ディレクトリにある同名のファイルで置き換えます。
   * copy_here.py で保存した RAW 画像を再利用し、ScanSnap Manager の設定によって結果がどう変わるかを検証するのに使えます。
 * rotate_for_comic.py
   * 右綴じ・右開きの本を横向きにスキャン可能にするためのものです。

@@ -103,7 +103,7 @@
 copy "$(SolutionDir)EasyHook\EasyHook32Svc.exe" "$(TargetDir)"
 copy "$(SolutionDir)EasyHook\EasyHook64.dll" "$(TargetDir)"
 xcopy /s /y "$(ProjectDir)sample_scripts\*" "$(TargetDir)"
-</PostBuildEvent>
+if not exist "$(TargetDir)\images" mkdir "$(TargetDir)\images"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

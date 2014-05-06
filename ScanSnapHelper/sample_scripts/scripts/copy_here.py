@@ -4,5 +4,6 @@ import sys
 
 file = sys.argv[1]
 basename = os.path.basename(file)
-print "  copy %s -> %s" % (file, basename)
-shutil.copy(file, basename)
+to = os.path.join('images', basename)
+print "  copy %s -> %s" % (file, to)
+shutil.copy(file, to)
